@@ -4,303 +4,83 @@
 <meta charset="utf-8">
 <title>Investor View · Who is paying, and with what money?</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<style>
-:root{
-  box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px);
-  padding-bottom:env(safe-area-inset-bottom,0px);
-  color-scheme:light;
-  --bg:#f4f2ec;
-  --ink:#1b2338;
-  --mut:#5b6379;
-  --grid:#1b233822;
-  --acc:#d6336c;
-  --card:#ffffff;
-  --soft:#1b23380a;
-  --c1:#b9770e;
-  --c2:#0f8f84;
-  --c3:#8b3fd0;
-}
-@media(prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    color-scheme:dark;
-    --bg:#090d19;
-    --ink:#eef0f6;
-    --mut:#9aa3bd;
-    --grid:#ffffff1f;
-    --acc:#ff6b9d;
-    --card:#121a2e;
-    --soft:#ffffff0d;
-    --c1:#e8b04a;
-    --c2:#4fd1c5;
-    --c3:#c084fc;
-  }
-}
-:root[data-theme="dark"]{
-  color-scheme:dark;
-  --bg:#090d19;
-  --ink:#eef0f6;
-  --mut:#9aa3bd;
-  --grid:#ffffff1f;
-  --acc:#ff6b9d;
-  --card:#121a2e;
-  --soft:#ffffff0d;
-  --c1:#e8b04a;
-  --c2:#4fd1c5;
-  --c3:#c084fc;
-}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.4 system-ui,sans-serif}
-main{max-width:1160px;margin:0 auto;padding:16px 16px 36px}
-h1{font-size:clamp(20px,2.5vw,26px);margin:0 0 2px}.sub{margin:0 0 10px;color:var(--mut);font-size:13px}
-.card{background:var(--card);border:1px solid var(--grid);border-radius:12px;padding:12px 14px;margin:10px 0}
-h2{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);margin:0 0 8px}
-h3{font-size:11.5px;margin:0 0 5px;color:var(--ink)}.cap{margin:-2px 0 6px;color:var(--mut);font-size:12px}
-
-/* Balanced Top Layout */
-.top{display:grid;grid-template-columns:1fr 280px;gap:12px;align-items:stretch;margin-top:10px}
-.top .card{margin:0;display:flex;flex-direction:column;justify-content:space-between}
-
-.grid-controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:start}
-@media(max-width:960px){
-  .grid-controls{grid-template-columns:1fr 1fr}
-  .top{grid-template-columns:1fr}
-}
-@media(max-width:540px){
-  .grid-controls{grid-template-columns:1fr}
-}
-
-.ctrl-col{display:flex;flex-direction:column;gap:4px}
-.row{display:flex;flex-wrap:wrap;gap:5px}
-.hint{margin:4px 0 0;font-size:11px;color:var(--mut);line-height:1.3}
-
-button{font:600 11.5px system-ui,sans-serif;color:var(--ink);background:var(--soft);border:1px solid var(--grid);border-radius:6px;padding:5px 9px;cursor:pointer;white-space:nowrap}
-button:hover{border-color:var(--acc)}
-button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
-
-#badge{margin-top:10px;font-size:11px;color:var(--mut);border-top:1px solid var(--grid);padding-top:6px}
-
-.lgb{font-size:11px;color:var(--mut);line-height:1.3}
-.lgb h2{margin-bottom:6px}
-.lgb b{color:var(--ink);font-size:11.5px}
-.lgb .it{margin:0 0 6px}
-.ph{display:flex;gap:6px;align-items:center;margin:2px 0}.ph i{flex:none;width:14px;height:4px;border-radius:2px}.ph small{opacity:.85}
-.gr{height:6px;border-radius:3px;margin:3px 0 1px}.gl{display:flex;justify-content:space-between}
-.wl{display:flex;gap:8px;align-items:flex-end;margin-top:2px}.wl span{text-align:center;font-size:10px}.wl i{display:block;background:var(--ink);border-radius:2px;width:24px;margin:0 auto 2px}
-.lgb details{border:0;padding:0;font-size:10.5px;margin-top:4px}
-.lgb summary{font-size:11px;cursor:pointer}
-.lgb details div{margin-top:3px}
-
-svg{width:100%;height:auto;display:block;touch-action:pan-y;fill:var(--mut)}
-svg text{font-family:system-ui,sans-serif;font-size:12px}
-.hl{paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round}
-.ax path,.ax line{stroke:var(--grid)}.ax text{fill:var(--mut)}
-#verdict{min-height:1.3em;color:var(--acc);font-weight:600;margin-top:4px;font-size:13px}
-
-details{border-top:1px solid var(--grid);padding:8px 0;font-size:13px}
-summary{cursor:pointer;font-weight:600;color:var(--ink)}
-details p,details li{color:var(--mut);margin:4px 0}
-details b{color:var(--ink)}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
+<!-- FILES: index.html (page text + layout) · style.css (looks) · data.js (the numbers) · main.js (all the D3 code) · writeup.js (text for the write-up sections) -->
 <main>
 <h1>Who is paying, and with what money?</h1>
-<p class="sub">Dubai property sales vs. the CBUAE base rate, one dot per month, Jan 2015 – Aug 2026.</p>
+<p class="sub">Dubai property sales (all property types, 10% random sample) vs. the CBUAE policy rate, one dot per month, Jan 2015 – Aug 2026.</p>
 
 <div class="top">
   <section class="card">
     <div>
       <h2>Controls</h2>
       <div class="grid-controls">
-        <div class="ctrl-col">
-          <h3>Playback</h3>
-          <div class="row" id="g1"></div>
-        </div>
-        <div class="ctrl-col">
-          <h3>Time window</h3>
-          <div class="row" id="g2"></div>
-        </div>
-        <div class="ctrl-col">
-          <h3>Display</h3>
-          <div class="row" id="g3"></div>
-          <p class="hint"><b>Smoothed</b> = 3-mo avg to calm noise. <b>Exact</b> = real count.</p>
-        </div>
-        <div class="ctrl-col">
-          <h3>Guess game</h3>
-          <div class="row" id="g4"></div>
-          <p class="hint">Hide path, draw expectation, reveal reality.</p>
-        </div>
+        <div class="ctrl-col"><h3>Playback</h3><div class="row" id="g1"></div></div>
+        <div class="ctrl-col"><h3>Time window</h3><div class="row" id="g2"></div></div>
+        <div class="ctrl-col"><h3>Display</h3><div class="row" id="g3"></div><p class="hint"><b>Smoothed</b> = 3-mo avg to calm noise. <b>Exact</b> = real count.</p></div>
       </div>
     </div>
     <div id="badge">embedded snapshot · verifying live CSV…</div>
   </section>
-
-  <section class="card lgb">
-    <h2>Legend</h2>
-    <div id="leg"></div>
-  </section>
+  <section class="card lgb"><h2>Legend</h2><div id="leg"></div></section>
 </div>
 
 <section class="card">
-  <h2>Detail · base rate vs. monthly sales</h2>
-  <svg id="v" viewBox="0 0 1000 450" role="img" aria-label="Connected scatterplot of base rate versus monthly sales"></svg>
-  <div id="verdict"></div>
+  <h2>Detail · policy rate vs. monthly sales (in the sample)</h2>
+  <div class="detail">
+    <div>
+      <svg id="v" viewBox="0 0 1000 450" role="img" aria-label="Connected scatterplot of policy rate versus monthly sales in the sample"></svg>
+      <div id="tape" class="tape"></div>
+      <p class="note">Rate = CBUAE repo rate before Jul 2020, CBUAE Base Rate from Jul 2020 (a change of instrument, not a policy move; see Data section). Counts are from a 10% sample. Tip: click any point, or drag the ▼ above the overview, to jump to that month.</p>
+    </div>
+    <aside class="desk">
+      <div class="inst"><h4>The Governor’s dial · policy rate</h4><svg id="dial" viewBox="0 0 220 160" role="img" aria-label="Dial showing the policy rate"></svg></div>
+      <div class="inst"><h4>100 sales in the sample</h4><svg id="notes" viewBox="0 0 220 130" role="img" aria-label="Sheet of 100 notes, one per sale; coloured notes have a matching mortgage registration"></svg><p id="notesTxt"></p>
+      <p><b>Why it matters:</b> higher rates should hit people who borrow first. If fewer sales per 100 come with a loan while total sales rise, sales are growing faster than bank lending.</p></div>
+    </aside>
+  </div>
 </section>
 
 <section class="card">
   <h2>Overview · choose a time window</h2>
-  <p class="cap">Drag the box or its edges. Top-right: counts inside window. Coloured ribbon = market phase.</p>
-  <svg id="ov" viewBox="0 0 1000 160" role="img" aria-label="Stacked-area overview with brush"></svg>
+  <p class="cap">Drag the box or its edges, or use the period buttons. Drag the ▼ to jump to any month of the playback. Strip = mortgage registrations per 100 sales (100% stacked, 3-month mean). Top-right: the window’s value, or the hovered month’s. Ribbon = market phase.</p>
+  <svg id="ov" viewBox="0 0 1000 160" role="img" aria-label="Stacked-area overview of mortgage registrations per sale with brush"></svg>
 </section>
 
 <details open>
   <summary>Encoding (marks and channels)</summary>
   <ul>
-    <li><b>Detail — connected scatterplot:</b> one dot per month; x = CBUAE base rate (%), y = monthly sales. Segments join consecutive months, so the line is the market’s path through time.</li>
-    <li><b>Line width</b> = mortgage ratio (mortgages ÷ sales that month): thick when many loans sit behind each sale, thin as they fade. <b>Colour</b> = market phase or velocity.</li>
-    <li><b>Dashed grey arrow</b> = schematic textbook expectation (higher rates → fewer sales). <b>Pink rings</b> = milestones.</li>
-    <li><b>Overview — stacked area:</b> x = month, y = monthly count, colour = Sales / Mortgages / Gifts stacked, with the brush and a phase ribbon.</li>
+    <li><b>Detail — connected scatterplot:</b> one dot per month; x = CBUAE policy rate (%), y = monthly sales in the sample. Segments join consecutive months, so the line is the market’s path through time.</li>
+    <li><b>Line width</b> = mortgage registrations per 100 sales that month (3-month mean). <b>Colour</b> = market phase (five periods defined by the rate path).</li>
+    <li><b>Dashed grey arrow</b> = schematic textbook expectation (higher rates → fewer sales); faint until you hover it.</li>
+    <li><b>The Governor’s dial</b> = the policy rate of the month in focus (needle angle, 0–6%). <b>Sheet of 100 notes</b> = how many of every 100 sales had a matching mortgage registration (coloured notes). <b>Tape</b> = the last three months in focus: rate, sales and direction of change.</li>
+    <li><b>Overview — 100% stacked area:</b> x = month; bottom band (teal) = mortgage registrations per sale, top band (grey) = “no matching mortgage registration”. Brush = selected window; ribbon = market phase.</li>
   </ul>
 </details>
 
 <details>
   <summary>Interaction guide</summary>
   <ul>
-    <li><b>Brush</b> the overview or use the period buttons; releasing snaps to whole months with an elastic ease (d3.easeBackOut).</li>
-    <li><b>Play / Pause / Reset / Speed:</b> replays the window month by month (0.5×, 1×, 2×); Reset restores everything.</li>
-    <li><b>Hover</b> detail chart: flashlight lines project month to both axes &amp; mark it on overview.</li>
-    <li><b>Guess first / Reveal reality:</b> draw your expected path, then watch the real one.</li>
-    <li><b>Linking:</b> broadcast on <code>BroadcastChannel('rising-tide')</code> as {from,to} month indexes.</li>
+    <li><b>Brush</b> the overview or use the team’s period buttons (2015–17, 2018–20, 2021–23, 2024–26); releasing snaps to whole months with an elastic ease (d3.easeBackOut).</li>
+    <li><b>Play / Pause / Reset / − +:</b> replays the window month by month (1× = 0.4 s per month; − and + change the speed). The dial needle swings with spring overshoot, and the tape and notes update.</li>
+    <li><b>Jump to a month:</b> click any point on the chart, or drag the ▼ marker above the overview. Play then continues from there.</li>
+    <li><b>Hover</b> the chart: flashlight lines project the month to both axes and mark it on the overview; dial, notes, tape and the overview corner all show that month.</li>
+    <li><b>Linking:</b> the window is broadcast on <code>BroadcastChannel('rising-tide')</code> as {from,to} month indexes (0 = Jan 2015). Final linking method still to be agreed with the team.</li>
   </ul>
 </details>
 
-<details>
-  <summary>Value added and interpretation</summary>
-  <div id="val"></div>
-</details>
-
-<details>
-  <summary>Lecture idioms</summary>
+<details><summary>Value added and interpretation</summary><div id="val"></div></details>
+<details><summary>Lecture idioms</summary>
   <p><b>Overview + Detail</b> (Week 7): a <b>Connected Scatterplot</b> as detail view and a <b>Stacked-Area time axis</b> as overview, tied by <b>brushing and linking</b>.</p>
 </details>
-
-<details>
-  <summary>Data, cleaning and external sources</summary>
-  <div id="dat"></div>
-</details>
+<details><summary>Data, cleaning and external sources</summary><div id="dat"></div></details>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-<script>
-const D={"m":[[198,45,3,49],[208,63,5,46],[158,56,3,48],[148,45,2,48],[195,50,17,68],[176,82,12,43],[86,51,3,22],[175,64,13,58],[180,59,13,53],[133,67,8,41],[225,60,10,130],[218,67,14,100],[183,46,9,52],[244,62,6,99],[126,72,5,31],[199,56,9,94],[191,53,11,75],[187,58,7,69],[150,45,6,92],[212,62,6,104],[121,46,10,51],[153,65,8,56],[185,97,13,57],[167,67,5,59],[199,60,7,90],[203,54,8,122],[219,83,15,109],[213,63,13,95],[238,86,13,99],[134,49,5,59],[212,65,8,106],[203,60,11,121],[149,55,19,86],[205,71,10,127],[155,56,9,67],[184,59,29,80],[168,79,13,82],[150,60,14,80],[150,48,12,54],[141,75,8,53],[190,74,8,104],[106,60,7,51],[122,68,20,66],[75,44,42,35],[121,41,6,63],[197,78,6,100],[112,49,24,57],[97,54,38,41],[94,45,19,48],[163,43,12,83],[137,46,17,84],[144,52,23,72],[155,53,11,98],[109,43,18,66],[199,65,17,117],[119,54,15,59],[156,70,28,91],[206,64,12,126],[130,54,10,70],[191,66,18,121],[144,48,19,58],[198,68,18,107],[151,60,14,72],[87,13,0,68],[66,34,4,39],[108,46,8,60],[136,49,20,46],[127,62,6,37],[180,62,19,53],[179,87,20,72],[208,61,6,86],[156,64,12,67],[163,143,18,46],[175,80,12,50],[246,87,11,93],[210,73,21,75],[202,81,8,73],[269,78,11,100],[224,68,17,88],[271,60,19,114],[282,99,12,114],[231,74,18,82],[371,81,17,161],[287,72,20,126],[290,63,5,128],[319,53,15,124],[393,74,29,133],[383,73,20,142],[319,61,12,136],[467,105,25,187],[384,83,22,163],[484,87,25,231],[413,89,17,216],[456,87,17,223],[559,94,21,282],[436,71,31,210],[452,77,19,226],[496,87,36,266],[619,109,54,336],[404,72,17,191],[559,128,26,269],[484,112,18,247],[558,94,23,258],[594,139,40,328],[644,116,27,367],[573,150,25,303],[633,126,24,286],[557,116,41,277],[529,141,29,281],[569,116,34,317],[642,124,34,365],[579,129,31,361],[887,147,58,563],[732,133,30,391],[849,198,41,472],[831,139,34,535],[887,188,32,585],[1056,174,49,665],[707,151,41,430],[766,133,56,456],[689,143,31,375],[816,155,32,472],[782,167,38,459],[909,205,43,502],[976,187,49,549],[804,148,34,484],[1062,199,46,650],[862,179,32,599],[1022,178,48,706],[977,176,51,625],[884,194,37,609],[938,182,39,656],[800,199,28,505],[865,180,25,545],[621,154,33,436],[685,179,36,504],[515,128,38,361],[668,151,54,497],[711,221,40,510],[594,193,24,394]],"r":[0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,1.0,1.0,1.0,1.25,1.25,1.25,1.5,1.5,1.5,1.5,1.5,1.5,1.75,1.75,1.75,2.0,2.0,2.0,2.25,2.25,2.25,2.5,2.5,2.5,2.75,2.75,2.75,2.75,2.75,2.75,2.75,2.75,2.5,2.25,2.0,2.0,2.0,2.0,2.0,0.25,0.25,0.25,0.25,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.4,0.4,0.9,1.65,2.4,2.4,3.15,3.15,3.9,4.4,4.4,4.65,4.9,4.9,5.15,5.15,5.4,5.4,5.4,5.4,5.4,5.4,5.4,5.4,5.4,5.4,5.4,5.4,5.4,5.4,4.9,4.9,4.65,4.4,4.4,4.4,4.4,4.4,4.4,4.4,4.4,4.4,4.15,3.9,3.9,3.65,3.65,3.65,3.65,3.65,3.65,3.65,3.65,3.65],"c":{"rows":89212,"badDate":0,"before2015":21664,"sep2026":526,"idYearMismatch":514,"lowPrice":17,"kept":67005}},URL_='https://raw.githubusercontent.com/sharios/CS333/main/2026-27/Part%202/transactions.csv';
-const L=70,R=975,mT=22,mB=390,sT=34,sB=110,N=D.m.length,mo=i=>new Date(2015+(i/12|0),i%12,1),fm=d3.timeFormat('%b %Y'),ix=(y,m)=>(y-2015)*12+m-1;
-const P=D.m.map((a,i)=>({i,s:a[0],mo:a[1],g:a[2],op:a[3],r:D.r[i]}));
-const sm=(k,i)=>{const a=Math.max(0,i-1),b=Math.min(N-1,i+1);let z=0;for(let j=a;j<=b;j++)z+=P[j][k];return z/(b-a+1)};
-P.forEach(p=>{p.S=sm('s',p.i);p.M=sm('mo',p.i);p.G=sm('g',p.i);p.q=p.M/p.S});P.forEach(p=>p.v=p.i?(p.S-P[p.i-1].S)/P[p.i-1].S:0);
-const PH=[['Pre-COVID','Jan 2015 – Feb 2020','≈0.25–2.75%',0,ix(2020,2),'#8795ad'],['Near-zero rates','Mar 2020 – Feb 2022','0.15–0.25%',ix(2020,3),ix(2022,2),'#2f9bff'],['Rate hikes','Mar 2022 – Jul 2023','0.40% → 5.40%',ix(2022,3),ix(2023,7),'#ff6b4a'],['Peak plateau','Aug 2023 – Aug 2024','5.40%',ix(2023,8),ix(2024,8),'#b362e6'],['Easing, then hold','Sep 2024 – Aug 2026','4.90% → 3.65%',ix(2024,9),N-1,'#2ebd85']],ph=i=>PH.find(f=>i>=f[3]&&i<=f[4]);
-const x=d3.scaleLinear([0,6],[L,R]),y=d3.scaleLinear([0,1],[mB,mT]),t=d3.scaleLinear([0,N-1],[L,R]);
-const vcol=d3.scaleSequential(d3.interpolateRgbBasis(['#2e86ff','#9aa3b5','#ff4d2e'])).domain([-.12,.12]).clamp(true),wsc=d3.scaleLinear([.15,.4],[1.5,8]).clamp(true);
-let win=[0,N-1],head=N-1,playing=false,timer=null,gm=0,gp=[],raw=false,zoom=true,cmode='phase',spd=1;
-const Y=p=>raw?p.s:p.S,Q=p=>raw?p.mo/p.s:p.q,C=p=>cmode=='phase'?ph(p.i)[5]:vcol(p.v),svg=d3.select('#v'),ov=d3.select('#ov');
-svg.append('defs').html('<marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0,0L10,5L0,10z" fill="#8c93a8"/></marker>');
-const axX=d3.axisBottom(x).ticks(8).tickFormat(d=>d+'%').tickSize(-(mB-mT)),axY=d3.axisLeft(y).ticks(7).tickSize(-(R-L));
-const gx=svg.append('g').attr('class','ax').attr('transform',`translate(0,${mB})`),gy=svg.append('g').attr('class','ax').attr('transform',`translate(${L},0)`);
-svg.append('text').attr('x',(L+R)/2).attr('y',mB+36).attr('text-anchor','middle').style('font-size','12px').text('CBUAE base rate (%)  →');
-svg.append('text').attr('transform',`translate(16,${(mT+mB)/2}) rotate(-90)`).attr('text-anchor','middle').style('font-size','12px').text('Sales per month (10% sample)  →');
-const ref=svg.append('g').attr('pointer-events','none');
-ref.append('line').attr('x1',L+30).attr('y1',mT+70).attr('x2',R-40).attr('y2',mB-40).attr('stroke','#8c93a8').attr('stroke-width',3).attr('stroke-dasharray','10 8').attr('opacity',.5).attr('marker-end','url(#ar)');
-ref.append('text').attr('class','hl').attr('x',L+34).attr('y',mT+58).attr('font-style','italic').text('Textbook expectation (schematic): higher rates → fewer sales');
-const real=svg.append('g'),ghost=real.append('path').attr('fill','none').attr('stroke','var(--ink)').attr('opacity',.2),segs=real.append('g').attr('stroke-linecap','round'),dots=real.append('g'),labs=real.append('g'),ms=real.append('g');
-const MS=[[2020,3,'Mar 2020 · COVID rate cuts',12,28,1],[2022,3,'Mar 2022 · first rate rise since COVID',12,-12,1],[2023,7,'Jul 2023 · peak 5.40%',-12,26,0],[2024,9,'Sep 2024 · first cut from peak',-12,-12,0],[2025,12,'Dec 2025 · 3.65%',-12,-12,0]].map(a=>({i:ix(a[0],a[1]),t:a[2],dx:a[3],dy:a[4],st:a[5]}));
-const fl=svg.append('g').attr('opacity',0).attr('pointer-events','none'),fx=fl.append('line'),fy=fl.append('line');[fx,fy].forEach(l=>l.attr('stroke','var(--acc)').attr('stroke-dasharray','5 4').attr('stroke-width',1.3));
-const fc=fl.append('circle').attr('r',6).attr('fill','none').attr('stroke','var(--acc)').attr('stroke-width',2.5);
-const rd1=svg.append('text').attr('x',R).attr('y',mT+16).attr('text-anchor','end').style('font-size','14px').style('font-weight',700).attr('fill','var(--ink)'),rd2=svg.append('text').attr('x',R).attr('y',mT+33).attr('text-anchor','end').style('font-size','12px');
-const idle = () => {
-  const latest = P[head] || P[win[1]];
-  if (latest) {
-    rd1.text(`${fm(mo(latest.i))} · base rate ${latest.r.toFixed(2)}%`);
-    rd2.text(`${Math.round(Y(latest))} sales · ${Q(latest).toFixed(2)} mortgages/sale · ${ph(latest.i)[0]}`);
-  }
-};
-
-
-const CR=[['s','S','Sales','var(--c1)'],['mo','M','Mortgages','var(--c2)'],['g','G','Gifts','var(--c3)']];
-const keys=CR.map(r=>[r[0],r[2],r[3]]),stk=d3.stack().keys(keys.map(k=>k[0]))(P),sy=d3.scaleLinear([0,d3.max(stk[2],d=>d[1])],[sB,sT]);
-ov.append('g').selectAll('path').data(stk).join('path').attr('fill',(_,k)=>keys[k][2]).attr('opacity',.85).attr('d',d3.area().x(d=>t(d.data.i)).y0(d=>sy(d[0])).y1(d=>sy(d[1])).curve(d3.curveMonotoneX));
-const ovPre=ov.append('text').attr('x',R-452).attr('y',17),ovT=keys.map((k,j)=>{ov.append('rect').attr('x',R-345+j*114).attr('y',8).attr('width',10).attr('height',10).attr('fill',k[2]);return ov.append('text').attr('x',R-331+j*114).attr('y',17).attr('fill','var(--ink)').style('font-weight',600)});
-const winTot=()=>{ovPre.text('Window total:');ovT.forEach((tx,j)=>tx.text(keys[j][1]+' '+d3.sum(P.slice(win[0],win[1]+1),p=>p[keys[j][0]]).toLocaleString()))};
-ov.append('text').attr('x',L).attr('y',17).attr('fill','var(--ink)').style('font-weight',700).text('Sales + mortgages + gifts stacked');
-PH.forEach(f=>ov.append('rect').attr('x',t(f[3])).attr('width',t(f[4])-t(f[3])+(R-L)/(N-1)).attr('y',sB+3).attr('height',6).attr('fill',f[5]));
-ov.append('g').attr('class','ax').attr('transform',`translate(0,${sB+9})`).call(d3.axisBottom(t).tickValues(d3.range(0,N,12)).tickFormat(i=>2015+i/12).tickSize(3));
-const omk=ov.append('line').attr('y1',sT).attr('y2',sB).attr('stroke','var(--ink)').attr('stroke-width',2).attr('opacity',0).attr('pointer-events','none');
-
-function render(){
- const[a,b]=zoom?win:[0,N-1],pts=P.slice(a,b+1);x.domain([0,d3.max(pts,p=>p.r)*1.08]).nice();y.domain([0,d3.max(pts,Y)*1.1]).nice();gx.call(axX);gy.call(axY);
- const ln=d3.line().x(p=>x(p.r)).y(p=>y(Y(p))),vis=P.filter(p=>p.i>=win[0]&&p.i<=win[1]&&p.i<=head);
- ghost.attr('d',zoom?null:ln(P.filter(p=>p.i<=head))).attr('stroke-width',1);
- segs.selectAll('line').data(vis.slice(1),p=>p.i).join('line').attr('x1',p=>x(P[p.i-1].r)).attr('y1',p=>y(Y(P[p.i-1]))).attr('x2',p=>x(p.r)).attr('y2',p=>y(Y(p))).attr('stroke-width',p=>wsc((Q(p)+Q(P[p.i-1]))/2)).attr('stroke',C).attr('opacity',.9);
- dots.selectAll('circle').data(vis,p=>p.i).join('circle').attr('r',2.4).attr('cx',p=>x(p.r)).attr('cy',p=>y(Y(p))).attr('fill',C);
- labs.selectAll('text').data(vis.filter(p=>p.i%12==0||p.i==win[0]),p=>p.i).join('text').attr('class','hl').attr('x',p=>x(p.r)+6).attr('y',p=>y(Y(p))+14).attr('fill','var(--ink)').style('font-size','11px').style('font-weight',600).text(p=>p.i%12==0?2015+p.i/12:fm(mo(p.i)));
- const mv=MS.filter(m=>m.i>=win[0]&&m.i<=win[1]&&m.i<=head).map(m=>({...m,p:P[m.i]})),
- g=ms.selectAll('g').data(mv,m=>m.i).join(e=>{const g=e.append('g');g.append('circle').attr('r',7).attr('fill','none').attr('stroke','var(--acc)').attr('stroke-width',2);g.append('text').attr('class','hl').attr('fill','var(--acc)').style('font-weight',700).style('font-size','11px');return g});
- g.select('circle').attr('cx',m=>x(m.p.r)).attr('cy',m=>y(Y(m.p)));
- g.select('text').attr('x',m=>x(m.p.r)+(x(m.p.r)>R-230?-Math.abs(m.dx):m.dx)).attr('y',m=>y(Y(m.p))+m.dy).attr('text-anchor',m=>(x(m.p.r)>R-230||!m.st)?'end':'start').text(m=>m.t);
- if(!fl.attr('opacity')*1)winTot()
-}
-
-function spot(p){fl.attr('opacity',1);const px=x(p.r),py=y(Y(p));fx.attr('x1',px).attr('x2',px).attr('y1',py).attr('y2',mB);fy.attr('x1',L).attr('x2',px).attr('y1',py).attr('y2',py);fc.attr('cx',px).attr('cy',py);omk.attr('opacity',1).attr('x1',t(p.i)).attr('x2',t(p.i));rd1.text(`${fm(mo(p.i))} · base rate ${p.r.toFixed(2)}%`);rd2.text(`${Math.round(Y(p))} sales · ${Q(p).toFixed(2)} mortgages/sale · ${ph(p.i)[0]}`);ovPre.text(fm(mo(p.i))+':');ovT.forEach((tx,j)=>tx.text(keys[j][1]+' '+p[keys[j][0]]))}
-const clear=()=>{fl.attr('opacity',0);omk.attr('opacity',0);idle();winTot()};
-let bc=null;try{bc=new BroadcastChannel('rising-tide')}catch(e){}
-const br=d3.brushX().extent([[L,sT],[R,sB]]).on('brush end',e=>{if(!e.selection)return;win=[Math.round(t.invert(e.selection[0])),Math.round(t.invert(e.selection[1]))];if(win[1]<=win[0])win[1]=win[0]+1;render();
- if(e.type=='end'&&e.sourceEvent){bc&&bc.postMessage({from:win[0],to:win[1]});if(Math.abs(t(win[0])-e.selection[0])>.5||Math.abs(t(win[1])-e.selection[1])>.5)gb.transition().duration(650).ease(d3.easeBackOut.overshoot(1.8)).call(br.move,[t(win[0]),t(win[1])])}});
-const gb=ov.append('g').call(br),to=(a,b)=>gb.transition().duration(1000).ease(d3.easeBackOut.overshoot(1.5)).call(br.move,[t(a),t(b)]);
-if(bc)bc.onmessage=e=>gb.call(br.move,[t(e.data.from),t(e.data.to)]);
-const hov=svg.append('rect').attr('x',L).attr('y',mT).attr('width',R-L).attr('height',mB-mT).attr('fill','transparent');
-hov.on('pointermove',e=>{if(playing||gm==1)return;const[mx,my]=d3.pointer(e);let best=null,bd=1e9;for(const p of P){if(p.i>head||p.i<win[0]||p.i>win[1])continue;const d=(x(p.r)-mx)**2+(y(Y(p))-my)**2;if(d<bd){bd=d;best=p}}best&&spot(best)}).on('pointerleave',()=>{if(!playing)clear()});
-const gov=svg.append('rect').attr('x',L).attr('y',mT).attr('width',R-L).attr('height',mB-mT).attr('fill','transparent').attr('pointer-events','none').style('cursor','crosshair');
-const gpath=svg.append('path').attr('fill','none').attr('stroke','#0f8f84').attr('stroke-width',4).attr('stroke-linecap','round').attr('pointer-events','none'),gl=d3.line().curve(d3.curveBasis);
-const hint=svg.append('text').attr('x',(L+R)/2).attr('y',(mT+mB)/2).attr('text-anchor','middle').style('font-size','16px').attr('fill','var(--ink)').attr('opacity',0).attr('pointer-events','none');
-let dr=false;gov.on('pointerdown',e=>{dr=true;gp=[d3.pointer(e)];hint.attr('opacity',0)}).on('pointermove',e=>{if(!dr)return;gp.push(d3.pointer(e));gpath.attr('d',gl(gp))}).on('pointerup pointerleave',()=>dr=false);
-
-const btn=(id,l,f)=>d3.select('#'+id).append('button').text(l).on('click',f);
-const pb=btn('g1','▶ Play',()=>playing?pause():play());btn('g1','↺ Reset',reset);
-const sb=btn('g1','Speed: 1×',()=>{spd=spd==1?.5:spd==.5?2:1;sb.text('Speed: '+spd+'×');if(playing)startTimer()});
-[['2015–19',0,59],['2020–21',60,83],['2022–23',84,107],['2024–26',108,N-1],['All',0,N-1]].forEach(a=>btn('g2',a[0],()=>{if(gm!=1)to(a[1],a[2])}));
-const zb=btn('g3','Axes: zoom',()=>{zoom=!zoom;zb.text(zoom?'Axes: zoom':'Axes: fixed');render()}),rb=btn('g3','Values: smoothed',()=>{raw=!raw;rb.text(raw?'Values: exact':'Values: smoothed');render()}),cb=btn('g3','Colour: phase',()=>{cmode=cmode=='phase'?'vel':'phase';cb.text('Colour: '+(cmode=='phase'?'phase':'vel'));legend();render()});
-const gb2=btn('g4','✎ Guess first',()=>{if(gm==1)return reveal();pause();gm=1;gp=[];gpath.attr('d',null).attr('stroke-dasharray',null);to(0,N-1);real.attr('opacity',0);ref.attr('opacity',0);clear();gov.attr('pointer-events','all');hint.attr('opacity',.9).text('Draw how you think sales moved as rates climbed from 0.15% to 5.4%  →');gb2.text('Reveal reality →').classed('on',true);d3.select('#verdict').text('')});
-const badge=d3.select('#badge');
-
-function legend(){
- const pm=cmode=='phase',css='linear-gradient(90deg,'+d3.range(0,1.01,.1).map(o=>vcol(-.12+o*.24)).join(',')+')';
- d3.select('#leg').html(`<div class="it"><b>Colour = ${pm?'market phase':'velocity'}</b>${pm?PH.map(f=>`<div class="ph"><i style="background:${f[5]}"></i><span>${f[0]} <small>${f[1].replace('Jan 2015','2015')}</small></span></div>`).join(''):`<div class="gr" style="background:${css}"></div><div class="gl"><span>falling</span><span>flat</span><span>up</span></div>`}</div>
- <div class="it"><b>Line width = mortgages per sale</b><div class="wl">${[[.15,'≈1 in 7'],[.25,'≈1 in 4'],[.4,'≈1 in 2.5']].map(a=>`<span><i style="height:${wsc(a[0])}px"></i>${a[1]}</span>`).join('')}</div></div>
- <div class="it"><span style="display:inline-block;width:16px;border-top:2px dashed #8c93a8;vertical-align:middle"></span> textbook expectation &nbsp; <span style="display:inline-block;width:8px;height:8px;border:2px solid var(--acc);border-radius:50%;vertical-align:middle"></span> milestone</div>
- <details><summary>Milestones</summary><div><b>Mar 2020</b> COVID rate cuts<br><b>Mar 2022</b> first rise since COVID (0.15% → 0.40%)<br><b>Jul 2023</b> peak 5.40%<br><b>Sep 2024</b> first cut from peak<br><b>Dec 2025</b> 3.65%, then hold</div></details>`);
-}
-
-function tick(){head++;if(head>=win[1]){head=win[1];render();spot(P[head]);pause();if(gm==2)verdict();return}render();spot(P[head])}
-const startTimer=()=>{timer&&timer.stop();timer=d3.interval(tick,(gm==2?100:150)/spd)};
-function reveal(){gm=2;gov.attr('pointer-events','none');hint.attr('opacity',0);gpath.attr('stroke-dasharray','2 9');real.attr('opacity',1);ref.attr('opacity',1);gb2.text('✎ Guess again').classed('on',false);head=-1;play()}
-function play(){if(gm==1)return;if(head>=win[1]||head<win[0])head=win[0];playing=true;pb.text('❚❚ Pause').classed('on',true);startTimer()}
-function pause(){timer&&timer.stop();playing=false;pb.text('▶ Play').classed('on',false)}
-function reset(){pause();gm=0;gp=[];gpath.attr('d',null);gov.attr('pointer-events','none');hint.attr('opacity',0);real.attr('opacity',1);ref.attr('opacity',1);gb2.text('✎ Guess first').classed('on',false);d3.select('#verdict').text('');head=N-1;gb.interrupt().call(br.move,[t(0),t(N-1)]);render();clear()}
-function verdict(){const a=P[ix(2021,7)],b=P[ix(2023,7)];d3.select('#verdict').text(`Reality: base rate ${a.r}% (Jul 2021) → ${b.r}% (Jul 2023); monthly sales went from about ${Math.round(a.S)} to ${Math.round(b.S)} (smoothed). Compare with your line.`)}
-const yr=y=>{const k=ix(y,1),z=P.slice(k,k+12);return[d3.sum(z,p=>p.s),d3.sum(z,p=>p.mo),d3.sum(z,p=>p.op)]},[s21,m21,o21]=yr(2021),[s24,m24,o24]=yr(2024),z26=P.slice(ix(2026,1)),o26=d3.sum(z26,p=>p.op)/d3.sum(z26,p=>p.s);
-const cor=(a,b)=>{const ma=d3.mean(a),mb=d3.mean(b);let u=0,v=0,w=0;a.forEach((_,i)=>{u+=(a[i]-ma)*(b[i]-mb);v+=(a[i]-ma)**2;w+=(b[i]-mb)**2});return u/Math.sqrt(v*w)},c1=cor(P.map(p=>p.r),P.map(p=>p.s)),c2=cor(P.slice(84).map(p=>p.r),P.slice(84).map(p=>p.s)),pc=v=>Math.round(v*100)+'%';
-d3.select('#val').html(`<p><b>What it shows.</b> From 2021 to 2024 sales rose ${s21.toLocaleString()} → ${s24.toLocaleString()} (×${(s24/s21).toFixed(1)}) while the base rate went from 0.15% to a 5.40% peak. Mortgages per sale fell from ${(m21/s21).toFixed(2)} to ${(m24/s24).toFixed(2)}: about 1 in ${Math.round(s21/m21)} sales → 1 in ${Math.round(s24/m24)}. The path does not follow the textbook arrow.</p>
-<p><b>Why it may not follow it:</b></p><ul>
-<li><b>Loans matter less than expected.</b> Only ~1/5 of sales have a matching mortgage post-2022.</li>
-<li><b>Off-plan growth.</b> Off-plan was ${pc(o21/s21)} of sales in 2021, ${pc(o24/s24)} in 2024 and ${pc(o26)} in 2026. Off-plan buyers typically pay developers in instalments.</li>
-<li><b>A low starting point.</b> Sales collapsed in 2020; the rise from 2021 includes post-COVID recovery.</li>
-<li><b>Imported rates.</b> CBUAE’s rate is anchored to the US Fed, reflecting US economic conditions, not Dubai’s internal market.</li></ul>
-<p><b>Caution.</b> Overall correlation is ${c1.toFixed(2)} due to long-term upward trend; post-2022 it is ${c2.toFixed(2)}. The scatterplot shows association through time, not direct causality.</p>`);
-const c=D.c;d3.select('#dat').html(`<p><b>Primary data:</b> Dubai Land Department transactions, 10% random sample (<code>transactions.csv</code>, ${c.rows.toLocaleString()} rows). Window: Jan 2015 – Aug 2026.</p>
-<p><b>Cleaning:</b> ${c.badDate} unparseable dates; ${c.before2015.toLocaleString()} rows dated before 2015 and ${c.sep2026} in partial Sep 2026 dropped; ${c.lowPrice} rows with price &lt; AED 10,000 dropped. Kept: ${c.kept.toLocaleString()} rows.</p>
-<p><b>External data:</b> CBUAE base rate (Overnight Deposit Facility), month-end value, joined on year-month (from centralbank.ae).</p>`);
-legend();gb.call(br.move,[t(0),t(N-1)]);render();idle();
-const ac=new AbortController(),tm_=setTimeout(()=>ac.abort(),20000),tot=P.reduce((a,p)=>a+p.s,0);
-d3.csv(URL_,{signal:ac.signal},r=>({k:ix(+r.instance_date.slice(0,4),+r.instance_date.slice(5,7)),g:r.trans_group_en,w:+r.actual_worth})).then(rows=>{clearTimeout(tm_);let s=0;for(const r of rows)if(r.k>=0&&r.k<N&&r.w>=10000&&r.g==='Sales')s++;badge.text(s===tot?'✓ snapshot verified against live CSV':'live CSV differs ('+s+' vs '+tot+')')}).catch(()=>badge.text('embedded snapshot (live CSV not reachable from this host)'));
-</script>
+<script src="data.js"></script>
+<script src="main.js"></script>
+<script src="writeup.js"></script>
 </body>
 </html>
